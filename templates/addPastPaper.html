@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Past Paper</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .form-container {
+        background-color: #fff;
+        padding: 30px 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 600px;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+    }
+
+    label {
+        font-weight: bold;
+        color: #555;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    select, input[type="file"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    /* Toggle buttons */
+    .toggle-group input {
+        display: none;
+    }
+
+    .toggle-group label {
+        padding: 8px 15px;
+        border: 1px solid #444;
+        cursor: pointer;
+        border-radius: 20px;
+        margin-right: 8px;
+        background-color: #f0f0f0;
+        transition: all 0.3s;
+        display: inline-block;
+        text-align: center;
+        min-width: 80px;
+    }
+
+    .toggle-group input:checked + label {
+        background: #0D1B5A; /* Dark blue */
+        color: white;
+        border-color: #0D1B5A;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background-color: #0D1B5A;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #162B86;
+    }
+</style>
+
+<script>
+function loadCourses(){
+    let faculty_id = document.getElementById("faculty").value;
+
+    fetch("/getCourses/" + faculty_id)
+    .then(response => response.json())
+    .then(data => {
+        let courseSelect = document.getElementById("course");
+        courseSelect.innerHTML = "";
+        data.forEach(course => {
+            let option = document.createElement("option");
+            option.value = course[0];
+            option.text = course[1];
+            courseSelect.appendChild(option);
+        });
+    });
+}
+</script>
+</head>
+
+<body>
+
+<div class="form-container">
+    <h2>Add Past Paper</h2>
+    <form method="POST" enctype="multipart/form-data">
+
+        <!-- Faculty -->
+        <label for="faculty">Faculty</label>
+        <select id="faculty" onchange="loadCourses()" required>
+            <option value="">Select Faculty</option>
+            {% for f in faculties %}
+            <option value="{{f[0]}}">{{f[1]}}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Course -->
+        <label for="course">Course</label>
+        <select name="course_id" id="course" required>
+            <option>Select Course</option>
+        </select>
+
+        <!-- Category -->
+        <label>Category</label>
+        <div class="toggle-group">
+            <input type="radio" id="t1" name="category" value="test1">
+            <label for="t1">Test 1</label>
+
+            <input type="radio" id="t2" name="category" value="test2">
+            <label for="t2">Test 2</label>
+
+            <input type="radio" id="a1" name="category" value="assignment1">
+            <label for="a1">Assignment 1</label>
+
+            <input type="radio" id="a2" name="category" value="assignment2">
+            <label for="a2">Assignment 2</label>
+
+            <input type="radio" id="ue" name="category" value="UE">
+            <label for="ue">UE</label>
+
+            <input type="radio" id="sup" name="category" value="supplementary">
+            <label for="sup">Supplementary</label>
+        </div>
+
+        <!-- Publication Year -->
+        <label for="publication_year">Publication Year</label>
+        <select name="publication_year" id="publication_year" required>
+            <option>2021</option>
+            <option>2022</option>
+            <option>2023</option>
+            <option>2024</option>
+            <option>2025</option>
+            <option>2026</option>
+        </select>
+
+        <!-- PDF -->
+        <label for="pdf_file">Upload PDF (Max 3MB)</label>
+        <input type="file" name="pdf_file" id="pdf_file" accept="application/pdf" required>
+
+        <button type="submit">Upload Past Paper</button>
+
+    </form>
+</div>
+
+</body>
+</html>

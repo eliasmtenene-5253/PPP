@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Course</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .form-container {
+        background-color: #fff;
+        padding: 30px 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 550px;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+    }
+
+    label {
+        font-weight: bold;
+        color: #555;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    /* Course Code & Name inline */
+    .inline-inputs {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .inline-inputs input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    /* Toggle buttons */
+    .toggle-group input {
+        display: none;
+    }
+
+    .toggle-group label {
+        padding: 8px 20px;
+        border: 1px solid #444;
+        cursor: pointer;
+        border-radius: 20px; /* rounded shape */
+        margin-right: 10px;
+        background-color: #f0f0f0;
+        transition: all 0.3s;
+        display: inline-block;
+        text-align: center;
+        min-width: 60px;
+    }
+
+    .toggle-group input:checked + label {
+        background: #0D1B5A; /* Dark blue */
+        color: white;
+        border-color: #0D1B5A;
+    }
+
+    .semester-group {
+        margin-bottom: 20px;
+    }
+
+    .semester-group .toggle-group label {
+        min-width: 50px;
+        padding: 6px 15px;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background-color: #0D1B5A;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #162B86;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Add Course</h2>
+    <form method="POST">
+
+        <!-- Course Code & Name inline -->
+        <div class="inline-inputs">
+            <div style="flex:1;">
+                <label for="course_code">Course Code</label>
+                <input type="text" id="course_code" name="course_code" placeholder="Code" required>
+            </div>
+            <div style="flex:2;">
+                <label for="course_name">Course Name</label>
+                <input type="text" id="course_name" name="course_name" placeholder="Name" required>
+            </div>
+        </div>
+
+        <!-- Faculty Combo -->
+        <label for="faculty_id">Faculty</label>
+        <select id="faculty_id" name="faculty_id" required>
+            <option value="">Select Faculty</option>
+            {% for f in faculties %}
+            <option value="{{f[0]}}">{{f[1]}}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Year of Study Horizontal -->
+        <label>Year Of Study</label>
+        <div class="toggle-group">
+            <input type="radio" id="y1" name="year_of_study" value="First Year" required>
+            <label for="y1">One</label>
+
+            <input type="radio" id="y2" name="year_of_study" value="Second Year">
+            <label for="y2">Two</label>
+
+            <input type="radio" id="y3" name="year_of_study" value="Third Year">
+            <label for="y3">Three</label>
+        </div>
+
+        <!-- Semester Short Single Line -->
+        <label>Semester</label>
+        <div class="semester-group toggle-group">
+            <input type="radio" id="s1" name="semester" value="Semester One" required>
+            <label for="s1">One</label>
+
+            <input type="radio" id="s2" name="semester" value="Semester Two">
+            <label for="s2">Two</label>
+        </div>
+
+        <button type="submit">Add Course</button>
+    </form>
+</div>
+
+</body>
+</html>

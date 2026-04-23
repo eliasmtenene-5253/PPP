@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDF Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <style>
+        body{
+            margin:0;
+            background:#0f172a;
+            font-family:system-ui, -apple-system, Arial;
+            color:white;
+            display:flex;
+            flex-direction:column;
+            min-height:100vh;
+        }
+
+        /* NAVBAR */
+        .nav{
+            background:#020617;
+            padding:16px;
+            text-align:center;
+            border-bottom:1px solid #1e293b;
+            font-size:18px;
+            font-weight:bold;
+            position:sticky;
+            top:0;
+            z-index:1000;
+        }
+
+        /* MAIN LAYOUT */
+        .main{
+            display:flex;
+            flex:1;
+        }
+
+        /* LEFT - PDF */
+        .pdf-section{
+            flex:3;
+            display:flex;
+            justify-content:center;
+        }
+
+        /* RIGHT - ADS */
+        .ads-section{
+            flex:1;
+            background:#020617;
+            border-left:1px solid #1e293b;
+            padding:20px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#64748b;
+            font-size:14px;
+        }
+
+        /* PDF container */
+        .container{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            padding:20px;
+            gap:20px;
+            width:100%;
+            max-width:900px;
+        }
+
+        canvas{
+            width:100%;
+            height:auto;
+            border-radius:10px;
+            box-shadow:0 6px 16px rgba(0,0,0,0.6);
+        }
+
+        /* FOOTER */
+        footer{
+            background:#020617;
+            padding:16px;
+            text-align:center;
+            font-size:14px;
+            color:#64748b;
+            border-top:1px solid #1e293b;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px){
+
+            .nav{
+                font-size:20px;
+                padding:18px;
+            }
+
+            .main{
+                flex-direction:column;
+            }
+
+            .ads-section{
+                display:none; /* hide ads on mobile */
+            }
+
+            .container{
+                padding:18px;
+                gap:18px;
+            }
+
+            canvas{
+                border-radius:12px;
+            }
+
+            footer{
+                font-size:16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <div class="nav">PDF Viewer</div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- PDF SIDE -->
+        <div class="pdf-section">
+            <div class="container" id="pdf-container"></div>
+        </div>
+
+        <!-- ADS SIDE -->
+        <div class="ads-section">
+            Ads / Space
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        © 2025 Past Paper Portal
+    </footer>
+
+    <script>
+        const url = "/user/pdf/{{paper_id}}";
+        const loadingTask = pdfjsLib.getDocument(url);
+
+        loadingTask.promise.then(function(pdf) {
+            const container = document.getElementById("pdf-container");
+
+            for(let pageNum = 1; pageNum <= pdf.numPages; pageNum++){
+                pdf.getPage(pageNum).then(function(page){
+
+                    const scale = window.innerWidth < 768 ? 1.4 : 1.6;
+                    const viewport = page.getViewport({ scale: scale });
+
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d");
+
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    container.appendChild(canvas);
+
+                    page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

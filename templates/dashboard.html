@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPP Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI, sans-serif;}
+body{display:flex;flex-direction:column;height:100vh;background:#f4f6f9;}
+
+/* NAVBAR */
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:white;
+  padding:10px 20px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.05);
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:1000;
+}
+.navbar .menu-toggle{
+  font-size:20px;
+  cursor:pointer;
+  display:none; /* hidden on desktop */
+}
+.navbar .title{
+  font-size:18px;
+  font-weight:bold;
+  text-align:center;
+  flex:1; /* center PPP in desktop */
+}
+.navbar .profile{
+  font-size:20px;
+  cursor:pointer;
+  position:relative;
+}
+
+/* PROFILE MENU */
+.profile-menu{
+  display:none;
+  position:absolute;
+  top:35px;
+  right:0;
+  background:white;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  border-radius:5px;
+  min-width:180px;
+  padding:10px;
+}
+.profile-menu p{margin:5px 0;font-size:14px;color:#333;}
+
+/* MAIN AREA */
+.main{
+  display:flex;
+  flex:1;
+  margin-top:60px; /* navbar height */
+  overflow:hidden;
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:240px;
+  background:#1e293b;
+  color:white;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  height:calc(100vh - 60px);
+  position:sticky;
+  top:60px;
+  z-index:999;
+}
+.sidebar .sidebar-title{
+  text-align:center;
+  padding:15px 0;
+  font-weight:bold;
+  font-size:16px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.sidebar ul{list-style:none;flex:1;overflow-y:auto;}
+.sidebar ul li{
+  padding:15px 20px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  cursor:pointer;
+}
+.sidebar ul li:hover{background:#334155;}
+.sidebar ul li i{margin-right:10px;}
+
+/* DASHBOARD CONTENT */
+.dashboard-content{
+  flex:1; /* fills remaining space next to sidebar */
+  padding:20px;
+  overflow-y:auto;
+}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+}
+.card{
+  background:white;
+  padding:20px;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+  text-align:center;
+}
+.card h3{font-size:18px;margin:10px 0;}
+.card i{font-size:30px;color:#2563eb;}
+.card p{font-size:20px;font-weight:bold;margin-top:5px;}
+
+/* IFRAME */
+#displayFrame{
+  width:100%;
+  height:75vh;
+  border:none;
+  border-radius:8px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  margin:20px 0;
+  display:none;
+}
+
+/* FOOTER */
+footer{
+  height:40px;
+  background:#1e293b;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* MOBILE RESPONSIVE */
+@media screen and (max-width:768px){
+  .navbar .menu-toggle{display:block;}
+  .navbar .title{flex:initial;text-align:left;}
+  .sidebar{
+    position:fixed;
+    left:-260px;
+    top:60px;
+    height:calc(100vh - 60px);
+    z-index:999;
+    transition:transform 0.3s ease;
+  }
+  .sidebar.active{transform:translateX(260px);}
+  .dashboard-content{margin-left:0;}
+  .sidebar .sidebar-title{display:none;}
+  .overlay{
+    display:none;
+    position:fixed;
+    top:60px;
+    left:0;
+    right:0;
+    bottom:0;
+    background:rgba(0,0,0,0.2);
+    z-index:998;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
+  <div class="title">PPP</div>
+  <div class="profile" id="profileIcon"><i class="fas fa-user-circle"></i>
+    <div class="profile-menu" id="profileMenu">
+      <p><strong>Muksini Mkombe</strong></p>
+      <p>muksini@example.com</p>
+      <hr>
+      <p>View Profile</p>
+      <p>Logout</p>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-title">Activities</div>
+    <ul>
+      <li onclick="showDashboard()"><i class="fa fa-home"></i> Home</li>
+      <li onclick="loadPage('/addFaculty')"><i class="fa fa-building"></i> Add Faculty</li>
+      <li onclick="loadPage('/addCourse')"><i class="fa fa-book"></i> Add Course</li>
+      <li onclick="loadPage('/addPastPaper')"><i class="fa fa-file"></i> Add Past Paper</li>
+      <li onclick="loadPage('/searchPaper')"><i class="fa fa-search"></i> Search Exams</li>
+      <li onclick="loadPage('/addPastPaper')"><i class="fa fa-book"></i> Add Course</li>
+    </ul>
+  </div>
+
+  <div class="dashboard-content" id="dashboardContent">
+    <!-- Dashboard Cards -->
+    <div id="dashboardCards" class="cards">
+      <div class="card"><i class="fa fa-building"></i><h3>Total Faculties</h3><p>10</p></div>
+      <div class="card"><i class="fa fa-book"></i><h3>Total Courses</h3><p>45</p></div>
+      <div class="card"><i class="fa fa-file"></i><h3>Total Past Papers</h3><p>120</p></div>
+      <div class="card"><i class="fa fa-users"></i><h3>Users</h3><p>320</p></div>
+    </div>
+
+    <!-- IFRAME -->
+    <iframe id="displayFrame" src=""></iframe>
+  </div>
+</div>
+
+<!-- Overlay for mobile -->
+<div class="overlay" id="overlay"></div>
+
+<!-- FOOTER -->
+<footer>© 2026 PPP</footer>
+
+<script>
+// SIDEBAR TOGGLE FOR MOBILE
+const sidebar = document.getElementById('sidebar');
+const menuToggle = document.getElementById('menuToggle');
+const overlay = document.getElementById('overlay');
+
+menuToggle.addEventListener('click', ()=>{
+  sidebar.classList.toggle('active');
+  overlay.style.display = sidebar.classList.contains('active')?'block':'none';
+  menuToggle.innerHTML = sidebar.classList.contains('active')?'<i class="fas fa-x"></i>':'<i class="fas fa-bars"></i>';
+});
+
+// CLOSE SIDEBAR ON CLICK OUTSIDE OR LINK
+overlay.addEventListener('click', ()=>closeSidebar());
+sidebar.querySelectorAll('li').forEach(li=>{
+  li.addEventListener('click', ()=>closeSidebar());
+});
+
+function closeSidebar(){
+  sidebar.classList.remove('active');
+  overlay.style.display = 'none';
+  menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+}
+
+// PROFILE MENU
+const profileIcon = document.getElementById('profileIcon');
+const profileMenu = document.getElementById('profileMenu');
+profileIcon.addEventListener('click', ()=>{ 
+  profileMenu.style.display = profileMenu.style.display==='block'?'none':'block';
+});
+document.addEventListener('click', (e)=>{
+  if(!profileIcon.contains(e.target)){
+    profileMenu.style.display = 'none';
+  }
+});
+
+// LOAD PAGES
+function loadPage(route){
+  document.getElementById('displayFrame').style.display = 'block';
+  document.getElementById('dashboardCards').style.display = 'none';
+  document.getElementById('displayFrame').src = route;
+}
+
+function showDashboard(){
+  document.getElementById('displayFrame').style.display = 'none';
+  document.getElementById('dashboardCards').style.display = 'grid';
+}
+</script>
+</body>
+</html>

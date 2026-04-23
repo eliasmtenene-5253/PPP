@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en" class="min-h-screen">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MU PastPaper Portal</title>
+    <meta name="description" content="Mzumbe University Past Paper Portal is a dedicated platform that allows MU students to access and review past papers from previous years, including assignments, tests, and university exams, helping them strengthen their understanding and prepare more effectively for upcoming assessments and exams.">
+
+    <link rel="icon" href="Mzumbe-Logo.png" type="assets/logo.png">
+
+    <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "MU PastPapers Portal",
+              "url": "https://mzumbe-pastpaperportal.onrender.com/",
+              "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://mzumbe-pastpaperportal.onrender.com/search?q={query}",
+              "query-input": "required name=query"
+              }
+            }
+    </script>
+
+
+    
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
+    <meta name="google-site-verification" content="c5J_pd3LHyhQ3pmohygoMZNo_T8wnaJCxx2e2ZkjtY0" />
+ 
+    <style>
+      
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-dark: #1d4ed8;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+            background-color: #020617;
+            color: var(--text-primary);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Hamburger animation */
+        .hamburger span {
+            transition: all 0.3s ease;
+        }
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -6px);
+        }
+
+        /* Sidebar slide-in */
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        /* Floating button animation */
+        .float-btn {
+            animation: float 3.4s ease-in-out infinite;
+            box-shadow: 0 12px 30px -6px rgba(30, 64, 175, 0.45);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-16px); }
+        }
+
+        .card-img {
+            object-fit: cover;
+            height: 100%;
+            width: 100%;
+        }
+
+ 
+        /* Mobile card adjustments */
+        @media (max-width: 639px) {
+            .card-mobile-short .mobile-img-container { height: 9rem; }
+            .card-mobile-short .mobile-content       { padding: 1rem; }
+            .card-mobile-short h3                    { font-size: 1.125rem; margin-top: 0.5rem; }
+            .card-mobile-short p                     { font-size: 0.8125rem; margin-top: 0.5rem; }
+            .card-mobile-short button                { padding: 0.5rem 1rem; font-size: 0.8125rem; }
+        }
+
+        
+      #hero-slider {
+      height: 200px;           /* Mobile */
+      position: relative;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    @media (min-width: 768px) {
+      #hero-slider {
+        height: 400px;         /* Desktop - taller */
+        margin-top: 0px;
+       }
+    }
+
+    .slides-container {
+      display: flex;
+      height: 100%;
+      transition: transform 0.7s ease-in-out;
+      cursor: grab;
+    }
+
+    .slide {
+      min-width: 100%;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .relative{
+        margin-bottom: 1rem;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.25));
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+
+    .slide h2 {
+      font-size: 1.75rem;
+      line-height: 1.2;
+    }
+
+    @media (min-width: 768px) {
+      .slide h2 {
+        font-size: 2.5rem;
+      }
+    }
+
+   .navigate-exams-title {
+    color: white;
+    padding: 16px;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    </style>
+</head>
+
+<body class="bg-slate-950 text-white min-h-screen flex flex-col">
+    <!-- NAVIGATION BAR -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="h-16 flex items-center justify-between">
+                <button id="hamburger-btn" class="hamburger w-12 h-12 flex flex-col justify-center items-center space-y-1.5 focus:outline-none">
+                    <span class="block w-7 h-0.5 bg-white rounded-full"></span>
+                    <span class="block w-7 h-0.5 bg-white rounded-full"></span>
+                    <span class="block w-7 h-0.5 bg-white rounded-full"></span>
+                </button>
+
+                <div class="flex-1 text-center">
+                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight">
+                        Welcome to <span class="text-blue-400">PastPaper Portal</span>
+                    </h1>
+                </div>
+
+                <div class="flex-1 max-w-sm hidden sm:block">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Enter Course Code"
+                               class="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-400 rounded-full py-3 pl-11 pr-14 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 outline-none transition-all">
+                        <button id="search-btn" class="search-btn absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-full cursor-pointer">
+                            <i class="fa-solid fa-magnifying-glass text-slate-400 text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="sm:hidden text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-search text-xl"></i>
+                </button>
+            </div>
+
+            <div class="sm:hidden px-2 pb-3 pt-1">
+                <div class="relative">
+                    <input type="text" id="search-input-mobile" placeholder="Enter Course Code"
+                           class="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-400 rounded-full py-2.5 pl-10 pr-12 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 outline-none transition-all">
+                    <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <button id="search-btn-mobile" class="search-btn absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full cursor-pointer">
+                        <i class="fa-solid fa-arrow-right text-blue-400"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SIDEBAR -->
+    <div id="sidebar" class="sidebar fixed inset-y-0 left-0 z-40 w-72 bg-slate-900 border-r border-slate-800 transform -translate-x-full transition-transform duration-400">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-2xl">📚</div>
+                    <span class="text-xl font-bold">PastPaper</span>
+                </div>
+                <button id="close-sidebar" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-2">
+                <a href="/admin_login" onclick="closeSidebar()" class="flex items-center gap-4 px-5 py-4 rounded-xl hover:bg-slate-800 transition-colors">
+                    <i class="fas fa-user-shield w-5"></i> System Administration
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay" class="hidden fixed inset-0 bg-black/60 z-30"></div>
+
+    
+    <main class="flex-1 max-w-7xl mx-auto px-5 sm:px-6 py-12 lg:py-16 mt-20">
+          <!-- Slider SECTION -->
+          <div id="hero-slider" class="relative">
+            <div id="slides-container" class="slides-container">
+              
+              <!-- Slide 1 -->
+            <div class="slide" style="background-image: url('https://static.independent.co.uk/2024/02/19/08/iStock-1222492007.jpg');">
+                <div class="overlay flex flex-col justify-center items-center text-center px-3 md:px-4">
+
+                    <h2 class="font-bold text-white text-xl sm:text-2xl md:text-5xl tracking-tight">
+                    View Exams
+                    </h2>
+
+                    <p class="text-blue-400 text-sm sm:text-base md:text-xl mt-2">
+                    Browse Past Papers Easily
+                    </p>
+
+                    <p class="text-gray-200 mt-2 md:mt-4 max-w-md md:max-w-xl text-xs sm:text-sm md:text-base">
+                    Access thousands of past exams from different universities and faculties in one place.
+                    </p>
+
+                    <div class="mt-4 md:mt-6 flex gap-2 md:gap-4">
+                    <a href="###" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 md:px-6 md:py-2 text-xs md:text-sm rounded-lg md:rounded-xl">
+                        View Now
+                    </a>
+                    </div>
+
+                </div>
+                </div>
+
+        
+              <!-- Slide 2 -->
+              <div class="slide" style="background-image: url('https://img.freepik.com/free-photo/cheerful-data-center-experts-working-together-using-deep-learning-algorithms_482257-126352.jpg?semt=ais_incoming&w=740&q=80');">
+                <div class="overlay flex flex-col justify-center items-center text-center px-3 md:px-4">
+
+                    <h2 class="font-bold text-white text-xl sm:text-2xl md:text-5xl tracking-tight">
+                    Meet Our Team
+                    </h2>
+
+                    <p class="text-blue-400 text-sm sm:text-base md:text-xl mt-2">
+                    Passionate & Dedicated Experts
+                    </p>
+
+                    <p class="text-gray-200 mt-2 md:mt-4 max-w-md md:max-w-xl text-xs sm:text-sm md:text-base">
+                    Get to know the people behind the platform working to improve your academic journey.
+                    </p>
+
+                    <div class="mt-4 md:mt-6 flex gap-2 md:gap-4">
+                    <a href="####" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 md:px-6 md:py-2 text-xs md:text-sm rounded-lg md:rounded-xl">
+                        Our Team
+                    </a>
+                    </div>
+
+                </div>
+                </div>
+
+        
+              <!-- Slide 4 (IT Consultant - Mobile Optimized) -->
+        <div class="slide" style="background-image: url('https://img.freepik.com/free-photo/modern-library-with-books_23-2150690000.jpg');">
+        <div class="overlay flex flex-col justify-center items-center text-center px-3 md:px-4">
+
+            <!-- Title -->
+            <h2 class="font-bold text-white text-xl sm:text-2xl md:text-5xl tracking-tight">
+            IT Consultant
+            </h2>
+
+            <!-- Subtitle -->
+            <p class="text-blue-400 text-sm sm:text-base md:text-xl mt-2 md:mt-3">
+            Professional Tech Solutions • Anytime
+            </p>
+
+            <!-- Description -->
+            <p class="text-gray-200 mt-2 md:mt-4 max-w-md md:max-w-xl text-xs sm:text-sm md:text-base">
+            Get expert advice on software, systems, networking, and digital transformation 
+            to grow your business efficiently.
+            </p>
+
+            <!-- Buttons -->
+            <div class="mt-4 md:mt-6 flex flex-wrap gap-2 md:gap-4 justify-center">
+            <a href="/hire" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 md:px-6 md:py-2 text-xs md:text-sm rounded-lg md:rounded-xl shadow-lg transition">
+                Contact us
+            </a>
+
+            <a href="/about" class="bg-transparent border border-white text-white px-4 py-1.5 md:px-6 md:py-2 text-xs md:text-sm rounded-lg md:rounded-xl hover:bg-white hover:text-black transition">
+                Learn More
+            </a>
+            </div>
+
+        </div>
+        </div>
+  
+            </div>
+          </div>
+
+
+          
+
+        <div class="navigate-exams-title"><h1>Navigate Exams in different Faculties below</h1></div>
+                   
+         <!-- CARDS SECTION -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+
+            <!-- Card 1 -->
+            <div class="bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 hover:border-blue-600/50 transition-all hover:shadow-xl hover:shadow-blue-900/10 card-mobile-short md:h-64">
+                <div class="flex flex-col md:flex-row h-full">
+                    <div class="md:w-2/5 mobile-img-container h-48 md:h-auto">
+                        <img src="https://img.freepik.com/premium-photo/computer-monitor-with-word-code-screen_1198274-6764.jpg?semt=ais_hybrid&w=740&q=80"
+                             alt="Computer Science" class="card-img">
+                    </div>
+                    <div class="mobile-content p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="text-blue-400 text-sm font-semibold">Faculty Of Science and Texhnology (FST) </div>
+                            <h3 class="text-xl font-semibold mt-2">Computer Science Studies</h3>
+                            <p class="text-slate-400 mt-3 text-sm line-clamp-3">
+                                Computer innovation
+                            </p>
+                        </div>
+                        <div class="mt-6">
+                            <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl text-sm font-medium transition-colors w-full md:w-auto">
+                                <a href="/faculty/view?faculty_id=4"> view papers</a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Card 2 -->
+            <div class="bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 hover:border-blue-600/50 transition-all hover:shadow-xl hover:shadow-blue-900/10 card-mobile-short md:h-64">
+                <div class="flex flex-col md:flex-row h-full">
+                    <div class="md:w-2/5 mobile-img-container h-48 md:h-auto">
+                        <img src="https://tanzania.eu.com/storage/2024/11/Samia-Suluhu-Hassans-Principles-16.jpg"
+                             alt="Computer Science" class="card-img">
+                    </div>
+                    <div class="mobile-content p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="text-blue-400 text-sm font-semibold">School of Public administration and Management (SOPAM) </div>
+                            <h3 class="text-xl font-semibold mt-2">Leadership and governance</h3>
+                            <p class="text-slate-400 mt-3 text-sm line-clamp-3">
+                                SOPAM
+                            </p>
+                        </div>
+                        <div class="mt-6">
+                            <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl text-sm font-medium transition-colors w-full md:w-auto">
+                                View Papers
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Card 3 -->
+            <div class="bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 hover:border-blue-600/50 transition-all hover:shadow-xl hover:shadow-blue-900/10 card-mobile-short md:h-64">
+                <div class="flex flex-col md:flex-row h-full">
+                    <div class="md:w-2/5 mobile-img-container h-48 md:h-auto">
+                        <img src="data:image/jpeg;base64,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"
+                             alt="Computer Science" class="card-img">
+                    </div>
+                    <div class="mobile-content p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="text-blue-400 text-sm font-semibold">School Of Business (SOB) </div>
+                            <h3 class="text-xl font-semibold mt-2">Entrepreneurship skills.</h3>
+                            <p class="text-slate-400 mt-3 text-sm line-clamp-3">
+                                SOB 
+                            </p>
+                        </div>
+                        <div class="mt-6">
+                            <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl text-sm font-medium transition-colors w-full md:w-auto">
+                               <a href="/faculty/view?faculty_id=20"> view papers</a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+             <!-- Card 4 -->
+            <div class="bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 hover:border-blue-600/50 transition-all hover:shadow-xl hover:shadow-blue-900/10 card-mobile-short md:h-64">
+                <div class="flex flex-col md:flex-row h-full">
+                    <div class="md:w-2/5 mobile-img-container h-48 md:h-auto">
+                        <img src="https://img.freepik.com/free-photo/gavel-scales-justice-law-books_23-2151998158.jpg?semt=ais_hybrid&w=740&q=80"
+                             alt="Computer Science" class="card-img">
+                    </div>
+                    <div class="mobile-content p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="text-blue-400 text-sm font-semibold">School Of LAW </div>
+                            <h3 class="text-xl font-semibold mt-2">Justice</h3>
+                            <p class="text-slate-400 mt-3 text-sm line-clamp-3">
+                               LAW 
+                            </p>
+                        </div>
+                        <div class="mt-6">
+                            <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl text-sm font-medium transition-colors w-full md:w-auto">
+                                <a href="/faculty/view?faculty_id=19"> view papers</a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-12 mt-12">
+        <div class="max-w-7xl mx-auto px-6 text-center text-slate-400 text-sm">
+            © 2026 MU PastPaper Portal • Built to smooth student preparation during exams and assesments...
+        </div>
+    </footer>
+
+<!-- FLOATING AI BUTTON -->
+<button id="ai-btn" class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
+    <i class="fas fa-robot text-lg animate-bounce"></i>
+</button>
+
+<!-- IFRAME CONTAINER -->
+<div id="ai-frame-container"
+  class="hidden fixed z-50 bg-white shadow-2xl overflow-hidden transition-all duration-300
+
+  /* MOBILE */
+  bottom-4 left-1/2 -translate-x-1/2 w-[75%] h-[45vh] rounded-2xl
+
+  /* DESKTOP */
+  md:bottom-24 md:right-6 md:left-auto md:translate-x-0 md:w-96 md:h-[500px] md:rounded-xl">
+
+  <!-- HEADER -->
+  <div class="flex justify-between items-center bg-blue-600 text-white px-3 py-2">
+    <span class="text-sm font-semibold">ORION 5- ask me any thing</span>
+    <button id="close-btn" class="text-white text-lg">&times;</button>
+  </div>
+
+  <!-- IFRAME -->
+  <iframe 
+    src="https://chatbot-1-ttoe.onrender.com" 
+    class="w-full h-[calc(100%-40px)] border-0">
+  </iframe>
+
+</div>
+
+    
+  
+    <script>
+        // Sidebar controls
+        const hamburger = document.getElementById('hamburger-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const closeSidebarBtn = document.getElementById('close-sidebar');
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            overlay.classList.remove('hidden');
+            hamburger.classList.add('active');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            overlay.classList.add('hidden');
+            hamburger.classList.remove('active');
+        }
+
+        hamburger.addEventListener('click', () => {
+            sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+        });
+
+        closeSidebarBtn?.addEventListener('click', closeSidebar);
+        overlay?.addEventListener('click', closeSidebar);
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeSidebar();
+        });
+
+        // Search
+        const searchInputs = [document.getElementById('search-input'), document.getElementById('search-input-mobile')];
+        const searchButtons = [document.getElementById('search-btn'), document.getElementById('search-btn-mobile')];
+
+        function doSearch(input) {
+            const q = input?.value?.trim().toUpperCase();
+            if (q) {
+                window.location.href = "/user/results?course_code=" + encodeURIComponent(q);
+            } else if (input) {
+                input.focus();
+            }
+        }
+
+        searchButtons.forEach((btn, i) => btn?.addEventListener('click', () => doSearch(searchInputs[i])));
+        searchInputs.forEach(inp => inp?.addEventListener('keypress', e => {
+            if (e.key === 'Enter') doSearch(inp);
+        }));
+
+// slide
+        
+    const container = document.getElementById('slides-container');
+    const totalSlides = 3;
+    let currentIndex = 0;
+    let isDragging = false;
+    let startX = 0;
+
+    function goToSlide(index) {
+      currentIndex = index;
+      container.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }
+
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % totalSlides;
+      goToSlide(currentIndex);
+    }
+
+    // Auto-play every 4.5 seconds
+    let autoInterval = setInterval(nextSlide, 4500);
+
+    // Mouse Drag Support
+    container.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.pageX;
+      container.style.transition = 'none';
+      clearInterval(autoInterval);
+    });
+
+    container.addEventListener('mouseup', (e) => {
+      isDragging = false;
+      container.style.transition = 'transform 0.7s ease-in-out';
+      autoInterval = setInterval(nextSlide, 4500);
+
+      const moved = e.pageX - startX;
+      if (moved < -80) {
+        currentIndex = Math.min(currentIndex + 1, totalSlides - 1);
+      } else if (moved > 80) {
+        currentIndex = Math.max(currentIndex - 1, 0);
+      }
+      goToSlide(currentIndex);
+    });
+
+    container.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const x = e.pageX;
+      const walk = (x - startX) * 1.8;
+      container.style.transform = `translateX(calc(-${currentIndex * 100}% + ${walk}px))`;
+    });
+
+    // Touch Swipe Support for Mobile
+    container.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      startX = e.touches[0].pageX;
+      container.style.transition = 'none';
+      clearInterval(autoInterval);
+    });
+
+    container.addEventListener('touchend', (e) => {
+      isDragging = false;
+      container.style.transition = 'transform 0.7s ease-in-out';
+      autoInterval = setInterval(nextSlide, 4500);
+
+      const moved = e.changedTouches[0].pageX - startX;
+      if (moved < -80) {
+        currentIndex = Math.min(currentIndex + 1, totalSlides - 1);
+      } else if (moved > 80) {
+        currentIndex = Math.max(currentIndex - 1, 0);
+      }
+      goToSlide(currentIndex);
+    });
+
+    // Initialize
+    window.onload = () => {
+      goToSlide(0);
+    };
+      
+    const btn = document.getElementById("ai-btn");
+    const frame = document.getElementById("ai-frame-container");
+    const closeBtn = document.getElementById("close-btn");
+    
+    // Toggle open/close
+    btn.addEventListener("click", () => {
+      frame.classList.toggle("hidden");
+    });
+    
+    // Close via X button
+    closeBtn.addEventListener("click", () => {
+      frame.classList.add("hidden");
+    });
+    
+    </script>
+</body>
+</html>

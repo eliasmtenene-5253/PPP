@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ faculty_name }}</title>
+
+
+    
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
+
+/* NAVBAR */
+.navbar {
+    background: #2c3e50;
+    color: white;
+    padding: 15px;
+    font-size: 18px;
+    text-align: center;
+}
+
+/* CONTAINER */
+.container {
+    padding: 15px;
+}
+
+/* CARDS */
+.cards {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.card {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* SEARCH */
+.search-box {
+    margin-bottom: 20px;
+}
+
+.search-box input {
+    width: 70%;
+    padding: 10px;
+}
+
+.search-box button {
+    padding: 10px;
+    background: #3498db;
+    color: white;
+    border: none;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #ecf0f1;
+}
+
+.view-btn {
+    padding: 5px 10px;
+    background: #27ae60;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .cards {
+        flex-direction: column;
+    }
+
+    .search-box input {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .search-box button {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    {{ faculty_name }}
+</div>
+
+<div class="container">
+
+    <!-- STATS -->
+    <div class="cards">
+        <div class="card">
+            <h3>{{ total_courses }}</h3>
+            <p>Courses</p>
+        </div>
+        <div class="card">
+            <h3>{{ total_exams }}</h3>
+            <p>Exams</p>
+        </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-box">
+        <form action="/user/results" method="GET">
+            <input type="text" name="course_code" placeholder="Enter course code..." required>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- RECENT PAPERS -->
+    <h3>Recently Added Papers</h3>
+
+    <table>
+        <tr>
+            <th>Course Code</th>
+            <th>Category</th>
+            <th>Year</th>
+            <th>Action</th>
+        </tr>
+
+        {% for paper in recent_papers %}
+        <tr>
+            <td>{{ paper[1] }}</td>
+            <td>{{ paper[2] }}</td>
+            <td>{{ paper[3] }}</td>
+            <td>
+                <a href="/user/view/{{ paper[0] }}" class="view-btn" target="_blank">View</a>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+</div>
+
+</body>
+</html>

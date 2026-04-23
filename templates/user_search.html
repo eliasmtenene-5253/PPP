@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Search Past Papers</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#f4f6f9;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.box{
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    text-align:center;
+}
+
+input{
+    padding:10px;
+    width:250px;
+    margin-top:10px;
+}
+
+button{
+    padding:10px 20px;
+    background:#007bff;
+    color:white;
+    border:none;
+    cursor:pointer;
+    margin-top:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+<h2>Search Past Papers</h2>
+
+<form method="POST" action="/user/results">
+<input type="text" name="course_code" placeholder="Enter Course Code" required>
+<br>
+<button type="submit">Search</button>
+</form>
+
+</div>
+
+</body>
+</html>
